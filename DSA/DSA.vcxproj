@@ -19,13 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaseDataStructure.cpp" />
     <ClCompile Include="src\BinarySearchTree.cpp" />
     <ClCompile Include="src\Choices.cpp" />
+    <ClCompile Include="src\FlowControl.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BaseDataStructure.h" />
     <ClInclude Include="src\BinarySearchTree.h" />
     <ClInclude Include="src\Choices.h" />
+    <ClInclude Include="src\DataStructures.h" />
+    <ClInclude Include="src\FlowControl.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

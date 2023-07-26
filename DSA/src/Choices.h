@@ -5,7 +5,8 @@
 #include <vector>
 
 
-class BaseChoice {
+class BaseChoice
+{
 private:
 	std::vector<std::string> m_choices;
 	virtual int getNumChoices() = 0;
@@ -25,3 +26,5 @@ public:
 	BSTChoices();
 	int getChoice() override;
 };
+
+

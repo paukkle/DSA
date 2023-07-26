@@ -11,7 +11,8 @@ BSTChoices::BSTChoices()
 		" 1. Print your current tree.",
 		" 2. Add a number to the tree.",
 		" 3. Search for a number.",
-		" 4. Return to main window."
+		" 4. Delete node",
+		" 5. Return to main window."
 	};
 }
 

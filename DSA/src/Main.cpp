@@ -6,12 +6,16 @@
 
 int main()
 {
-    BinarySearchTree* bst = exampleBST();
-    printBinaryTreeInOrder(bst);
+    
+    BinarySearchTree* bst = BinarySearchTree::exampleBST();
+    bst->printStructure();
 
     std::cout << bst->searchNode(0) << std::endl;
 
     BSTChoices bstChoices = BSTChoices();
 
-    bstChoices.getChoice();
+    //bstChoices.getChoice();
+
+    bst->deleteNode(5);
+    bst->printStructure();
 }
