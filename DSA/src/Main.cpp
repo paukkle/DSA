@@ -10,12 +10,16 @@ int main()
     BinarySearchTree* bst = BinarySearchTree::exampleBST();
     bst->printStructure();
 
-    std::cout << bst->searchNode(0) << std::endl;
-
     BSTChoices bstChoices = BSTChoices();
 
     //bstChoices.getChoice();
 
-    bst->deleteNode(5);
+    int search = 10;
+
+    std::cout << bst->searchNode(search) << std::endl;
+    bst->deleteNode(search);
+    std::cout << bst->searchNode(search) << std::endl;
     bst->printStructure();
+    delete bst;
+
 }

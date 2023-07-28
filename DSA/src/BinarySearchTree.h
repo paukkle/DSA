@@ -4,29 +4,34 @@
 #include <string>
 
 
-class NodeLeaf
+struct NodeLeaf
 {
 	int value;
-	NodeLeaf* left = nullptr;
-	NodeLeaf* right = nullptr;
+	NodeLeaf* leftNode = nullptr;
+	NodeLeaf* rightNode = nullptr;
+
+	NodeLeaf(int value);
 };
 
 class BinarySearchTree : BaseDataStructure
 {
-private:
-	int value;
-	BinarySearchTree* leftNode = nullptr;
-	BinarySearchTree* rightNode = nullptr;
-	void printTreeInOrder(BinarySearchTree* root, int level = 0, const std::string& prefix = "Root: ");
-
 public:
 	BinarySearchTree(int value);
+	~BinarySearchTree();
 	void insertNode(int value);
 	bool searchNode(int value);
-	void deleteNode(int value, BinarySearchTree* parentNode = nullptr);
-	void deleteTree(BinarySearchTree* root);
-	int getMinValue();
+	void deleteNode(int value);
 	void printStructure() override;
 	static BinarySearchTree* exampleBST();
+	NodeLeaf* getMinValue();
+
+private:
+	NodeLeaf* m_root;
+	void printTreeInOrder(NodeLeaf* root, int level = 0, const std::string& prefix = "Root: ");
+	void _insertNode(NodeLeaf* root, int value);
+	NodeLeaf* _deleteNode(NodeLeaf* root, int value);
+	void deleteTree(NodeLeaf* root);
+	NodeLeaf* _getMinValue(NodeLeaf* root);
+
 	
 };

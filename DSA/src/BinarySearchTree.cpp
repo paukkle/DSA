@@ -5,12 +5,20 @@
 #include "BinarySearchTree.h"
 
 
-BinarySearchTree::BinarySearchTree(int value)
-	: value(value) {}
+NodeLeaf::NodeLeaf(int value)
+	: value(value){}
 
-void BinarySearchTree::insertNode(int value)
+
+BinarySearchTree::BinarySearchTree(int value)
+	: m_root(new NodeLeaf(value)){}
+
+BinarySearchTree::~BinarySearchTree() {
+	deleteTree(m_root);
+}
+
+void BinarySearchTree::_insertNode(NodeLeaf* root, int value)
 {
-	BinarySearchTree* currentNode = this;
+	NodeLeaf* currentNode = root;
 
 	while (true)
 	{
@@ -18,7 +26,7 @@ void BinarySearchTree::insertNode(int value)
 		{
 			if (currentNode->leftNode == nullptr)
 			{
-				currentNode->leftNode = new BinarySearchTree(value);
+				currentNode->leftNode = new NodeLeaf(value);
 				break;
 			}
 
@@ -28,7 +36,7 @@ void BinarySearchTree::insertNode(int value)
 		{
 			if (currentNode->rightNode == nullptr)
 			{
-				currentNode->rightNode = new BinarySearchTree(value);
+				currentNode->rightNode = new NodeLeaf(value);
 				break;
 			}
 
@@ -37,9 +45,15 @@ void BinarySearchTree::insertNode(int value)
 	}
 }
 
+
+void BinarySearchTree::insertNode(int value)
+{
+	_insertNode(m_root, value);
+}
+
 bool BinarySearchTree::searchNode(int value)
 {
-	BinarySearchTree* currentNode = this;
+	NodeLeaf* currentNode = m_root;
 
 	while (currentNode != nullptr)
 	{
@@ -62,87 +76,67 @@ bool BinarySearchTree::searchNode(int value)
 }
 
 
-void BinarySearchTree::deleteNode(int value, BinarySearchTree* parentNode)
+NodeLeaf* BinarySearchTree::_deleteNode(NodeLeaf* root, int value)
 {
-	BinarySearchTree* currentNode = this;
-
-	while (currentNode != nullptr)
-	{
-		if (value < currentNode->value)
-		{
-			parentNode = currentNode;
-			currentNode = currentNode->leftNode;
+		if (root == nullptr) {
+			return root;
 		}
-		else if (value > currentNode->value)
-		{
-			parentNode = currentNode;
-			currentNode = currentNode->rightNode;
+
+		if (value < root->value) {
+			root->leftNode = _deleteNode(root->leftNode, value);
+		}
+		else if (value > root->value) {
+			root->rightNode = _deleteNode(root->rightNode, value);
 		}
 		else {
-			// both leaves are non-empty
-			// search for the minimum value from the right leaf and set it as the currentNode's value
-			// then remove the minimum value from the right subtree
-			if (currentNode->leftNode != nullptr && currentNode->rightNode != nullptr)
-			{
-				currentNode->value = currentNode->rightNode->getMinValue();
-				currentNode->rightNode->deleteNode(currentNode->value, currentNode);
+			// Node with only one child or no child
+			if (root->leftNode == nullptr) {
+				NodeLeaf* temp = root->rightNode;
+				delete root;
+				return temp;
+			}
+			else if (root->rightNode == nullptr) {
+				NodeLeaf* temp = root->leftNode;
+				delete root;
+				return temp;
 			}
 
-			// we have found the value and parentNode is nullptr,
-			// indicating that we're not removing the minimum value
-			else if (parentNode == nullptr)
-			{
+			// Node with two children: Get the in-order successor (smallest in the right subtree)
+			NodeLeaf* temp = _getMinValue(root->rightNode);
 
-				// there are leaves on the left side
-				// replace current node value with the left
-				if (currentNode->leftNode != nullptr)
-				{
-					currentNode->value = currentNode->leftNode->value;
-					currentNode->rightNode = currentNode->leftNode->rightNode;
-					currentNode->leftNode = currentNode->leftNode->leftNode;
-				}
+			// Copy the successor's value to the current node
+			root->value = temp->value;
 
-				// there are leaves on the left side
-				// replace current node value with the left
-				else if (currentNode->rightNode != nullptr)
-				{
-					currentNode->value = currentNode->rightNode->value;
-					currentNode->leftNode = currentNode->rightNode->leftNode;
-					currentNode->rightNode = currentNode->rightNode->rightNode;
-				}
-			} 
-			
-			// we are removing the minimum value from the right side
-			// parentNode's left or right leaf is nullptr
-			else if (parentNode->leftNode == currentNode)
-			{
-				parentNode->leftNode = currentNode->leftNode != nullptr ? currentNode->leftNode
-																		: currentNode->rightNode;
-			} else if (parentNode->rightNode == currentNode) {
-				parentNode->rightNode = currentNode->leftNode != nullptr ? currentNode->leftNode
-																		: currentNode->rightNode;
-			}
-
-			break;
+			// Delete the in-order successor
+			root->rightNode = _deleteNode(root->rightNode, temp->value);
 		}
 
-	}
+		return root;
 }
 
-
-int BinarySearchTree::getMinValue()
+void BinarySearchTree::deleteNode(int value)
 {
-	if (leftNode == nullptr)
-	{
-		return value;
-	}
-	else
-	{
-		return leftNode->getMinValue();
-	}
+	m_root = _deleteNode(m_root, value);
+}
+NodeLeaf* BinarySearchTree::getMinValue()
+{
+	return _getMinValue(m_root);
 }
 
-void BinarySearchTree::printTreeInOrder(BinarySearchTree* root, int level, const std::string& prefix)
+NodeLeaf* BinarySearchTree::_getMinValue(NodeLeaf* root) {
+	if (root == nullptr) {
+		return nullptr;
+	}
+
+	while (root->leftNode != nullptr) {
+		root = root->leftNode;
+	}
+
+	return root;
+}
+
+
+void BinarySearchTree::printTreeInOrder(NodeLeaf* root, int level, const std::string& prefix)
 {
 	if (root != nullptr) {
 		std::cout << std::string(level * 4, ' ') << prefix << root->value << std::endl;
@@ -153,7 +147,7 @@ void BinarySearchTree::printTreeInOrder(BinarySearchTree* root, int level, const
 
 void BinarySearchTree::printStructure()
 {
-	printTreeInOrder(this);
+	printTreeInOrder(m_root);
 }
 
 BinarySearchTree* BinarySearchTree::exampleBST()
@@ -174,7 +168,7 @@ BinarySearchTree* BinarySearchTree::exampleBST()
 }
 
 
-void BinarySearchTree::deleteTree(BinarySearchTree* root)
+void BinarySearchTree::deleteTree(NodeLeaf* root)
 {
 	if (root == nullptr) return;
 
@@ -183,3 +177,4 @@ void BinarySearchTree::deleteTree(BinarySearchTree* root)
 
 	delete root;
 }
+
